@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Flame, Pencil, Plus } from "lucide-react";
+import { Sparkles, Flame, Pencil, Plus, Undo2, Trash2 } from "lucide-react";
 
 const NUMBER_CARDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const MODIFIERS = [2, 4, 6, 8, 10, "x2"] as const;
 
 type Props = {
   disabled?: boolean;
+  canUndo?: boolean;
   onSubmit: (score: number) => void;
   onOpenManual: () => void;
+  onUndo: () => void;
+  onDelete: () => void;
 };
 
-export function ScorePicker({ disabled, onSubmit, onOpenManual }: Props) {
+export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo, onDelete }: Props) {
   const [picks, setPicks] = useState<number[]>([]);
   const [mods, setMods] = useState<(number | "x2")[]>([]);
   const [busted, setBusted] = useState(false);
@@ -96,6 +99,15 @@ export function ScorePicker({ disabled, onSubmit, onOpenManual }: Props) {
           >
             <Flame className="h-3 w-3" /> Bust
           </button>
+          <button
+            type="button"
+            disabled={!canUndo}
+            onClick={onUndo}
+            title="Undo last round"
+            className="h-8 rounded-md border border-border bg-secondary px-2 text-xs font-semibold text-secondary-foreground transition hover:border-primary/50 disabled:opacity-40 inline-flex items-center gap-1"
+          >
+            <Undo2 className="h-3 w-3" /> Undo
+          </button>
         </div>
 
         {flip7Bonus > 0 && !busted && (
@@ -104,9 +116,14 @@ export function ScorePicker({ disabled, onSubmit, onOpenManual }: Props) {
           </span>
         )}
 
-        <Button size="sm" variant="ghost" onClick={onOpenManual} disabled={disabled} title="Enter score manually" className="ml-auto">
-          <Pencil className="h-4 w-4" />
-        </Button>
+        <div className="ml-auto flex items-center gap-1">
+          <Button size="sm" variant="ghost" onClick={onOpenManual} disabled={disabled} title="Enter score manually">
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button size="sm" variant="ghost" onClick={onDelete} title="Remove player" className="text-destructive hover:text-destructive">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );
