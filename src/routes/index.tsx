@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clearState, loadState, saveState, uid, type GameState, type Player } from "@/lib/flip7";
 import { RoundEntry } from "@/components/RoundEntry";
+import { ScorePicker } from "@/components/ScorePicker";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -170,9 +171,6 @@ function Index() {
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Button size="sm" onClick={() => setEntryFor(p)} disabled={!!winner}>
-                    <Plus className="mr-1 h-4 w-4" /> {p.rounds.length < maxRounds ? "Enter score" : "Add round"}
-                  </Button>
                   <Button size="sm" variant="secondary" onClick={() => undoLast(p.id)} disabled={p.rounds.length === 0}>
                     <Undo2 className="mr-1 h-4 w-4" /> Undo
                   </Button>
@@ -180,6 +178,12 @@ function Index() {
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
+
+                <ScorePicker
+                  disabled={!!winner}
+                  onSubmit={(score) => addRoundScore(p.id, score)}
+                  onOpenManual={() => setEntryFor(p)}
+                />
 
                 {p.rounds.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-1">
