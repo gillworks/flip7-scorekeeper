@@ -200,8 +200,12 @@ function Index() {
           })}
 
           {!winner && state.players.length > 0 && (
-            <Button variant="secondary" className="w-full" onClick={nextRound}>
-              Start round {state.round + 1}
+            <Button variant="secondary" className="w-full" onClick={finishRound}>
+              {someoneOverTarget && !roundComplete
+                ? "Finish round (auto-0 missing players)"
+                : roundComplete
+                  ? `Start round ${maxRounds + 1}`
+                  : "End round (auto-0 missing players)"}
             </Button>
           )}
         </div>
