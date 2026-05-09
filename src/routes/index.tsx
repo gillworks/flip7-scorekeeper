@@ -176,13 +176,19 @@ function Index() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-3xl font-black tabular-nums">{p.total}</div>
+                  <div className="text-right">
+                    <div className="text-3xl font-black tabular-nums">{p.total}</div>
+                    {(drafts[p.id] ?? 0) > 0 && (
+                      <div className="text-xs text-primary tabular-nums">+{drafts[p.id]} pending</div>
+                    )}
+                  </div>
                 </div>
 
                 <ScorePicker
+                  key={`${p.id}-${roundKey}`}
                   disabled={!!winner}
                   canUndo={p.rounds.length > 0}
-                  onSubmit={(score) => addRoundScore(p.id, score)}
+                  onChange={(score) => setDraft(p.id, score)}
                   onOpenManual={() => setEntryFor(p)}
                   onUndo={() => undoLast(p.id)}
                   onDelete={() => removePlayer(p.id)}
@@ -207,12 +213,8 @@ function Index() {
           })}
 
           {!winner && state.players.length > 0 && (
-            <Button variant="secondary" className="w-full" onClick={finishRound}>
-              {someoneOverTarget && !roundComplete
-                ? "Finish round (auto-0 missing players)"
-                : roundComplete
-                  ? `Start round ${maxRounds + 1}`
-                  : "End round (auto-0 missing players)"}
+            <Button variant="secondary" className="w-full" onClick={commitRound}>
+              {someoneOverTarget ? `Finish round ${state.round}` : `End round ${state.round}`}
             </Button>
           )}
         </div>
