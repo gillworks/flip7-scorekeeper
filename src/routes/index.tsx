@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clearState, loadState, saveState, uid, type GameState, type Player } from "@/lib/flip7";
 import { RoundEntry } from "@/components/RoundEntry";
+import { ScorePicker } from "@/components/ScorePicker";
 
 export const Route = createFileRoute("/")({
   component: Index,
