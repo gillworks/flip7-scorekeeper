@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Flame, Pencil, Plus, Undo2, Trash2 } from "lucide-react";
+import { Sparkles, Flame, Pencil, Plus, Undo2, Trash2, Check } from "lucide-react";
 
 const NUMBER_CARDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const MODIFIERS = [2, 4, 6, 8, 10, "x2"] as const;
