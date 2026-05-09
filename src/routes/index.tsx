@@ -157,13 +157,19 @@ function Index() {
                       {i + 1}
                     </div>
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="truncate font-semibold">{p.name}</span>
                         {isLeader && <Crown className="h-4 w-4 text-primary" />}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {p.rounds.length} round{p.rounds.length === 1 ? "" : "s"}
-                        {p.rounds.length > 0 && ` · last ${p.rounds[p.rounds.length - 1]}`}
+                        {p.rounds.map((r, idx) => (
+                          <span
+                            key={idx}
+                            className={`rounded-md px-2 py-0.5 text-xs font-medium tabular-nums ${
+                              r === 0 ? "bg-destructive/20 text-destructive" : "bg-secondary text-secondary-foreground"
+                            }`}
+                          >
+                            R{idx + 1}: {r}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
