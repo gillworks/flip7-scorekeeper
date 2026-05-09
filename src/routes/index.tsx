@@ -62,15 +62,6 @@ function Index() {
     setDrafts((d) => { const n = { ...d }; delete n[id]; return n; });
   }
 
-  function addRoundScore(id: string, score: number) {
-    setState((s) => ({
-      ...s,
-      players: s.players.map((p) =>
-        p.id === id ? { ...p, rounds: [...p.rounds, score], total: p.total + score } : p,
-      ),
-    }));
-  }
-
   function setDraft(id: string, score: number) {
     setDrafts((d) => ({ ...d, [id]: score }));
   }
