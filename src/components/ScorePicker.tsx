@@ -95,14 +95,19 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
           <button
             type="button"
             disabled={disabled}
-            onClick={() => setBusted((b) => !b)}
-            className={`h-8 rounded-md border px-2 text-xs font-semibold transition inline-flex items-center gap-1 ${
-              busted
-                ? "bg-destructive text-destructive-foreground border-destructive"
-                : "bg-secondary text-secondary-foreground border-border hover:border-destructive/50"
-            } disabled:opacity-40`}
+            onClick={handleBust}
+            className="h-8 rounded-md border border-border bg-secondary px-2 text-xs font-semibold text-secondary-foreground transition hover:border-destructive/50 hover:bg-destructive hover:text-destructive-foreground disabled:opacity-40 inline-flex items-center gap-1"
           >
             <Flame className="h-3 w-3" /> Bust
+          </button>
+          <button
+            type="button"
+            disabled={disabled || (picks.length === 0 && mods.length === 0)}
+            onClick={handleStay}
+            title="Stay — log this round"
+            className="h-8 rounded-md border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition hover:opacity-90 disabled:opacity-40 inline-flex items-center gap-1"
+          >
+            <Check className="h-3 w-3" /> Stay {computed > 0 ? computed : ""}
           </button>
           <button
             type="button"
