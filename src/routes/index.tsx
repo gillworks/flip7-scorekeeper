@@ -39,7 +39,11 @@ function Index() {
     [state.players],
   );
   const leader = sorted[0];
-  const winner = leader && leader.total >= state.targetScore ? leader : null;
+  const maxRounds = state.players.reduce((m, p) => Math.max(m, p.rounds.length), 0);
+  const minRounds = state.players.reduce((m, p) => Math.min(m, p.rounds.length), maxRounds);
+  const roundComplete = state.players.length > 0 && maxRounds === minRounds && maxRounds > 0;
+  const someoneOverTarget = state.players.some((p) => p.total >= state.targetScore);
+  const winner = roundComplete && leader && leader.total >= state.targetScore ? leader : null;
 
   function addPlayer() {
     const name = newName.trim();
