@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Flame, Pencil, Plus, Undo2, Trash2 } from "lucide-react";
+import { Sparkles, Flame, Pencil, Plus, Undo2, Trash2, Check } from "lucide-react";
 
 const NUMBER_CARDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const MODIFIERS = [2, 4, 6, 8, 10, "x2"] as const;
@@ -17,10 +17,9 @@ type Props = {
 export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo, onDelete }: Props) {
   const [picks, setPicks] = useState<number[]>([]);
   const [mods, setMods] = useState<(number | "x2")[]>([]);
-  const [busted, setBusted] = useState(false);
 
   function reset() {
-    setPicks([]); setMods([]); setBusted(false);
+    setPicks([]); setMods([]);
   }
   function toggleNum(n: number) {
     setPicks((p) => p.includes(n) ? p.filter((x) => x !== n) : [...p, n]);
@@ -33,18 +32,23 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
   const flip7Bonus = picks.length === 7 ? 15 : 0;
   const x2 = mods.includes("x2");
   const flatMods = mods.filter((m): m is number => m !== "x2").reduce((a, b) => a + b, 0);
-  const computed = busted ? 0 : (x2 ? numSum * 2 : numSum) + flatMods + flip7Bonus;
+  const computed = (x2 ? numSum * 2 : numSum) + flatMods + flip7Bonus;
 
-  function handleAdd() {
+  function handleStay() {
+    if (picks.length === 0 && mods.length === 0) return;
     onSubmit(computed);
+    reset();
+  }
+  function handleBust() {
+    onSubmit(0);
     reset();
   }
 
   return (
     <div className="mt-3 space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" onClick={handleAdd} disabled={disabled}>
-          <Plus className="h-4 w-4" /> Add {computed > 0 || busted ? computed : ""}
+        <Button size="sm" variant="ghost" onClick={onOpenManual} disabled={disabled} title="Manual entry">
+          <Plus className="h-4 w-4" /> Add
         </Button>
 
         <div className="flex flex-wrap gap-1">
@@ -54,7 +58,7 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
               <button
                 key={n}
                 type="button"
-                disabled={disabled || busted}
+                disabled={disabled}
                 onClick={() => toggleNum(n)}
                 className={`h-8 w-8 rounded-md border text-xs font-bold transition ${
                   active
@@ -75,7 +79,7 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
               <button
                 key={String(m)}
                 type="button"
-                disabled={disabled || busted}
+                disabled={disabled}
                 onClick={() => toggleMod(m)}
                 className={`h-8 rounded-md border px-2 text-xs font-semibold transition ${
                   active
@@ -90,14 +94,19 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
           <button
             type="button"
             disabled={disabled}
-            onClick={() => setBusted((b) => !b)}
-            className={`h-8 rounded-md border px-2 text-xs font-semibold transition inline-flex items-center gap-1 ${
-              busted
-                ? "bg-destructive text-destructive-foreground border-destructive"
-                : "bg-secondary text-secondary-foreground border-border hover:border-destructive/50"
-            } disabled:opacity-40`}
+            onClick={handleBust}
+            className="h-8 rounded-md border border-border bg-secondary px-2 text-xs font-semibold text-secondary-foreground transition hover:border-destructive/50 hover:bg-destructive hover:text-destructive-foreground disabled:opacity-40 inline-flex items-center gap-1"
           >
             <Flame className="h-3 w-3" /> Bust
+          </button>
+          <button
+            type="button"
+            disabled={disabled || (picks.length === 0 && mods.length === 0)}
+            onClick={handleStay}
+            title="Stay — log this round"
+            className="h-8 rounded-md border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition hover:opacity-90 disabled:opacity-40 inline-flex items-center gap-1"
+          >
+            <Check className="h-3 w-3" /> Stay {computed > 0 ? computed : ""}
           </button>
           <button
             type="button"
@@ -110,7 +119,7 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
           </button>
         </div>
 
-        {flip7Bonus > 0 && !busted && (
+        {flip7Bonus > 0 && (
           <span className="inline-flex items-center gap-1 text-xs text-primary">
             <Sparkles className="h-3 w-3" /> +15
           </span>
