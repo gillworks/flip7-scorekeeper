@@ -24,6 +24,8 @@ function Index() {
   const [hydrated, setHydrated] = useState(false);
   const [newName, setNewName] = useState("");
   const [entryFor, setEntryFor] = useState<Player | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, number>>({});
+  const [roundKey, setRoundKey] = useState(0);
 
   useEffect(() => {
     const s = loadState();
@@ -40,11 +42,10 @@ function Index() {
     [state.players],
   );
   const leader = sorted[0];
-  const maxRounds = state.players.reduce((m, p) => Math.max(m, p.rounds.length), 0);
-  const minRounds = state.players.reduce((m, p) => Math.min(m, p.rounds.length), maxRounds);
-  const roundComplete = state.players.length > 0 && maxRounds === minRounds && maxRounds > 0;
+  const allRoundsEqual = state.players.length > 0 &&
+    state.players.every((p) => p.rounds.length === state.players[0].rounds.length);
   const someoneOverTarget = state.players.some((p) => p.total >= state.targetScore);
-  const winner = roundComplete && leader && leader.total >= state.targetScore ? leader : null;
+  const winner = allRoundsEqual && state.players[0]?.rounds.length > 0 && leader && leader.total >= state.targetScore ? leader : null;
 
   function addPlayer() {
     const name = newName.trim();
@@ -58,15 +59,24 @@ function Index() {
 
   function removePlayer(id: string) {
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }));
+    setDrafts((d) => { const n = { ...d }; delete n[id]; return n; });
   }
 
-  function addRoundScore(id: string, score: number) {
+  function setDraft(id: string, score: number) {
+    setDrafts((d) => ({ ...d, [id]: score }));
+  }
+
+  function commitRound() {
     setState((s) => ({
       ...s,
-      players: s.players.map((p) =>
-        p.id === id ? { ...p, rounds: [...p.rounds, score], total: p.total + score } : p,
-      ),
+      players: s.players.map((p) => {
+        const score = drafts[p.id] ?? 0;
+        return { ...p, rounds: [...p.rounds, score], total: p.total + score };
+      }),
+      round: s.round + 1,
     }));
+    setDrafts({});
+    setRoundKey((k) => k + 1);
   }
 
   function undoLast(id: string) {
@@ -80,22 +90,12 @@ function Index() {
     }));
   }
 
-  function finishRound() {
-    setState((s) => {
-      const target = s.players.reduce((m, p) => Math.max(m, p.rounds.length), 0);
-      const players = s.players.map((p) =>
-        p.rounds.length < target
-          ? { ...p, rounds: [...p.rounds, ...Array(target - p.rounds.length).fill(0)] }
-          : p,
-      );
-      return { ...s, players, round: target + 1 };
-    });
-  }
-
   function resetGame() {
     if (!confirm("Reset the game? All scores will be cleared.")) return;
     clearState();
     setState({ players: [], targetScore: DEFAULT_TARGET, round: 1 });
+    setDrafts({});
+    setRoundKey((k) => k + 1);
   }
 
   return (
@@ -167,13 +167,19 @@ function Index() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-3xl font-black tabular-nums">{p.total}</div>
+                  <div className="text-right">
+                    <div className="text-3xl font-black tabular-nums">{p.total}</div>
+                    {(drafts[p.id] ?? 0) > 0 && (
+                      <div className="text-xs text-primary tabular-nums">+{drafts[p.id]} pending</div>
+                    )}
+                  </div>
                 </div>
 
                 <ScorePicker
+                  key={`${p.id}-${roundKey}`}
                   disabled={!!winner}
                   canUndo={p.rounds.length > 0}
-                  onSubmit={(score) => addRoundScore(p.id, score)}
+                  onChange={(score) => setDraft(p.id, score)}
                   onOpenManual={() => setEntryFor(p)}
                   onUndo={() => undoLast(p.id)}
                   onDelete={() => removePlayer(p.id)}
@@ -198,12 +204,8 @@ function Index() {
           })}
 
           {!winner && state.players.length > 0 && (
-            <Button variant="secondary" className="w-full" onClick={finishRound}>
-              {someoneOverTarget && !roundComplete
-                ? "Finish round (auto-0 missing players)"
-                : roundComplete
-                  ? `Start round ${maxRounds + 1}`
-                  : "End round (auto-0 missing players)"}
+            <Button variant="secondary" className="w-full" onClick={commitRound}>
+              {someoneOverTarget ? `Finish round ${state.round}` : `End round ${state.round}`}
             </Button>
           )}
         </div>
@@ -213,7 +215,7 @@ function Index() {
         open={!!entryFor}
         player={entryFor}
         onClose={() => setEntryFor(null)}
-        onSubmit={(score) => entryFor && addRoundScore(entryFor.id, score)}
+        onSubmit={(score) => entryFor && setDraft(entryFor.id, score)}
       />
 
       <footer className="mt-12 text-center text-xs text-muted-foreground">
