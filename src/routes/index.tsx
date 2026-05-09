@@ -39,7 +39,11 @@ function Index() {
     [state.players],
   );
   const leader = sorted[0];
-  const winner = leader && leader.total >= state.targetScore ? leader : null;
+  const maxRounds = state.players.reduce((m, p) => Math.max(m, p.rounds.length), 0);
+  const minRounds = state.players.reduce((m, p) => Math.min(m, p.rounds.length), maxRounds);
+  const roundComplete = state.players.length > 0 && maxRounds === minRounds && maxRounds > 0;
+  const someoneOverTarget = state.players.some((p) => p.total >= state.targetScore);
+  const winner = roundComplete && leader && leader.total >= state.targetScore ? leader : null;
 
   function addPlayer() {
     const name = newName.trim();
@@ -75,8 +79,16 @@ function Index() {
     }));
   }
 
-  function nextRound() {
-    setState((s) => ({ ...s, round: s.round + 1 }));
+  function finishRound() {
+    setState((s) => {
+      const target = s.players.reduce((m, p) => Math.max(m, p.rounds.length), 0);
+      const players = s.players.map((p) =>
+        p.rounds.length < target
+          ? { ...p, rounds: [...p.rounds, ...Array(target - p.rounds.length).fill(0)] }
+          : p,
+      );
+      return { ...s, players, round: target + 1 };
+    });
   }
 
   function resetGame() {
@@ -159,7 +171,7 @@ function Index() {
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <Button size="sm" onClick={() => setEntryFor(p)} disabled={!!winner}>
-                    <Plus className="mr-1 h-4 w-4" /> Add round
+                    <Plus className="mr-1 h-4 w-4" /> {p.rounds.length < maxRounds ? "Enter score" : "Add round"}
                   </Button>
                   <Button size="sm" variant="secondary" onClick={() => undoLast(p.id)} disabled={p.rounds.length === 0}>
                     <Undo2 className="mr-1 h-4 w-4" /> Undo
@@ -188,8 +200,12 @@ function Index() {
           })}
 
           {!winner && state.players.length > 0 && (
-            <Button variant="secondary" className="w-full" onClick={nextRound}>
-              Start round {state.round + 1}
+            <Button variant="secondary" className="w-full" onClick={finishRound}>
+              {someoneOverTarget && !roundComplete
+                ? "Finish round (auto-0 missing players)"
+                : roundComplete
+                  ? `Start round ${maxRounds + 1}`
+                  : "End round (auto-0 missing players)"}
             </Button>
           )}
         </div>
