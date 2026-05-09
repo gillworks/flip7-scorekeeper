@@ -224,7 +224,7 @@ function Index() {
         open={!!entryFor}
         player={entryFor}
         onClose={() => setEntryFor(null)}
-        onSubmit={(score) => entryFor && addRoundScore(entryFor.id, score)}
+        onSubmit={(score) => entryFor && setDraft(entryFor.id, score)}
       />
 
       <footer className="mt-12 text-center text-xs text-muted-foreground">
