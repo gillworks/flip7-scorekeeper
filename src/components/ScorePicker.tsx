@@ -35,16 +35,21 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
   const flatMods = mods.filter((m): m is number => m !== "x2").reduce((a, b) => a + b, 0);
   const computed = busted ? 0 : (x2 ? numSum * 2 : numSum) + flatMods + flip7Bonus;
 
-  function handleAdd() {
+  function handleStay() {
+    if (picks.length === 0 && mods.length === 0 && !busted) return;
     onSubmit(computed);
+    reset();
+  }
+  function handleBust() {
+    onSubmit(0);
     reset();
   }
 
   return (
     <div className="mt-3 space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" onClick={handleAdd} disabled={disabled}>
-          <Plus className="h-4 w-4" /> Add {computed > 0 || busted ? computed : ""}
+        <Button size="sm" variant="ghost" onClick={onOpenManual} disabled={disabled} title="Manual entry">
+          <Plus className="h-4 w-4" /> Add
         </Button>
 
         <div className="flex flex-wrap gap-1">
