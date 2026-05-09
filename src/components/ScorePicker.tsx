@@ -58,7 +58,7 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
               <button
                 key={n}
                 type="button"
-                disabled={disabled || busted}
+                disabled={disabled}
                 onClick={() => toggleNum(n)}
                 className={`h-8 w-8 rounded-md border text-xs font-bold transition ${
                   active
@@ -79,7 +79,7 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
               <button
                 key={String(m)}
                 type="button"
-                disabled={disabled || busted}
+                disabled={disabled}
                 onClick={() => toggleMod(m)}
                 className={`h-8 rounded-md border px-2 text-xs font-semibold transition ${
                   active
@@ -119,7 +119,7 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
           </button>
         </div>
 
-        {flip7Bonus > 0 && !busted && (
+        {flip7Bonus > 0 && (
           <span className="inline-flex items-center gap-1 text-xs text-primary">
             <Sparkles className="h-3 w-3" /> +15
           </span>
