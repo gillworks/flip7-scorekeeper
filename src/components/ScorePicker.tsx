@@ -17,10 +17,9 @@ type Props = {
 export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo, onDelete }: Props) {
   const [picks, setPicks] = useState<number[]>([]);
   const [mods, setMods] = useState<(number | "x2")[]>([]);
-  const [busted, setBusted] = useState(false);
 
   function reset() {
-    setPicks([]); setMods([]); setBusted(false);
+    setPicks([]); setMods([]);
   }
   function toggleNum(n: number) {
     setPicks((p) => p.includes(n) ? p.filter((x) => x !== n) : [...p, n]);
@@ -33,10 +32,10 @@ export function ScorePicker({ disabled, canUndo, onSubmit, onOpenManual, onUndo,
   const flip7Bonus = picks.length === 7 ? 15 : 0;
   const x2 = mods.includes("x2");
   const flatMods = mods.filter((m): m is number => m !== "x2").reduce((a, b) => a + b, 0);
-  const computed = busted ? 0 : (x2 ? numSum * 2 : numSum) + flatMods + flip7Bonus;
+  const computed = (x2 ? numSum * 2 : numSum) + flatMods + flip7Bonus;
 
   function handleStay() {
-    if (picks.length === 0 && mods.length === 0 && !busted) return;
+    if (picks.length === 0 && mods.length === 0) return;
     onSubmit(computed);
     reset();
   }
