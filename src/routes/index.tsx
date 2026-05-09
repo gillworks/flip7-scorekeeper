@@ -79,8 +79,16 @@ function Index() {
     }));
   }
 
-  function nextRound() {
-    setState((s) => ({ ...s, round: s.round + 1 }));
+  function finishRound() {
+    setState((s) => {
+      const target = s.players.reduce((m, p) => Math.max(m, p.rounds.length), 0);
+      const players = s.players.map((p) =>
+        p.rounds.length < target
+          ? { ...p, rounds: [...p.rounds, ...Array(target - p.rounds.length).fill(0)] }
+          : p,
+      );
+      return { ...s, players, round: target + 1 };
+    });
   }
 
   function resetGame() {
