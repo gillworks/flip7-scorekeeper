@@ -171,7 +171,7 @@ function Index() {
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <Button size="sm" onClick={() => setEntryFor(p)} disabled={!!winner}>
-                    <Plus className="mr-1 h-4 w-4" /> Add round
+                    <Plus className="mr-1 h-4 w-4" /> {p.rounds.length < maxRounds ? "Enter score" : "Add round"}
                   </Button>
                   <Button size="sm" variant="secondary" onClick={() => undoLast(p.id)} disabled={p.rounds.length === 0}>
                     <Undo2 className="mr-1 h-4 w-4" /> Undo
