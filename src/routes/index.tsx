@@ -170,19 +170,13 @@ function Index() {
                   <div className="text-3xl font-black tabular-nums">{p.total}</div>
                 </div>
 
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Button size="sm" variant="secondary" onClick={() => undoLast(p.id)} disabled={p.rounds.length === 0}>
-                    <Undo2 className="mr-1 h-4 w-4" /> Undo
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => removePlayer(p.id)} className="ml-auto text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-
                 <ScorePicker
                   disabled={!!winner}
+                  canUndo={p.rounds.length > 0}
                   onSubmit={(score) => addRoundScore(p.id, score)}
                   onOpenManual={() => setEntryFor(p)}
+                  onUndo={() => undoLast(p.id)}
+                  onDelete={() => removePlayer(p.id)}
                 />
 
                 {p.rounds.length > 0 && (
