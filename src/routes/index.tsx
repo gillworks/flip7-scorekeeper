@@ -190,21 +190,6 @@ function Index() {
                   onUndo={() => undoLast(p.id)}
                   onDelete={() => removePlayer(p.id)}
                 />
-
-                {p.rounds.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {p.rounds.map((r, idx) => (
-                      <span
-                        key={idx}
-                        className={`rounded-md px-2 py-0.5 text-xs font-medium tabular-nums ${
-                          r === 0 ? "bg-destructive/20 text-destructive" : "bg-secondary text-secondary-foreground"
-                        }`}
-                      >
-                        R{idx + 1}: {r}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
             );
           })}
