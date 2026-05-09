@@ -151,29 +151,29 @@ function Index() {
                 key={p.id}
                 className="rounded-xl border border-border bg-[var(--gradient-card)] p-4 shadow-[var(--shadow-card)]"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex min-w-0 items-center gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex shrink-0 items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold tabular-nums">
                       {i + 1}
                     </div>
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="truncate font-semibold">{p.name}</span>
-                        {isLeader && <Crown className="h-4 w-4 text-primary" />}
-                        {p.rounds.map((r, idx) => (
-                          <span
-                            key={idx}
-                            className={`rounded-md px-2 py-0.5 text-xs font-medium tabular-nums ${
-                              r === 0 ? "bg-destructive/20 text-destructive" : "bg-secondary text-secondary-foreground"
-                            }`}
-                          >
-                            R{idx + 1}: {r}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className="truncate font-semibold">{p.name}</span>
+                      {isLeader && <Crown className="h-4 w-4 text-primary" />}
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2">
+                    {p.rounds.map((r, idx) => (
+                      <span
+                        key={idx}
+                        className={`rounded-md px-2 py-0.5 text-xs font-medium tabular-nums ${
+                          r === 0 ? "bg-destructive/20 text-destructive" : "bg-secondary text-secondary-foreground"
+                        }`}
+                      >
+                        R{idx + 1}: {r}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="shrink-0 text-right">
                     <div className="text-3xl font-black tabular-nums">{p.total}</div>
                     {(drafts[p.id] ?? 0) > 0 && (
                       <div className="text-xs text-primary tabular-nums">+{drafts[p.id]} pending</div>
