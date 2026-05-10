@@ -160,6 +160,12 @@ function Index() {
                       <span className="truncate text-3xl font-black">{p.name}</span>
                       {isLeader && <Crown className="h-4 w-4 text-primary" />}
                     </div>
+                    <div className="shrink-0">
+                      <span className="text-3xl font-black tabular-nums">{p.total}</span>
+                      {(drafts[p.id] ?? 0) > 0 && (
+                        <span className="ml-2 text-xs text-primary tabular-nums">+{drafts[p.id]} pending</span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2">
                     {p.rounds.map((r, idx) => (
@@ -172,12 +178,6 @@ function Index() {
                         R{idx + 1}: {r}
                       </span>
                     ))}
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <div className="text-3xl font-black tabular-nums">{p.total}</div>
-                    {(drafts[p.id] ?? 0) > 0 && (
-                      <div className="text-xs text-primary tabular-nums">+{drafts[p.id]} pending</div>
-                    )}
                   </div>
                 </div>
 
