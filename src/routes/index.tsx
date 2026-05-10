@@ -99,14 +99,14 @@ function Index() {
   }
 
   return (
-    <main className="min-h-screen w-full px-4 py-8 sm:py-12">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="bg-[var(--gradient-primary)] bg-clip-text text-4xl font-black tracking-tight text-transparent sm:text-5xl">
+    <main className="min-h-screen w-full px-4 py-4">
+      <header className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <h1 className="bg-[var(--gradient-primary)] bg-clip-text text-2xl font-black tracking-tight text-transparent sm:text-3xl">
             Flip 7
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Scorekeeper · Round {state.round} · First to {state.targetScore}
+          <p className="text-xs text-muted-foreground">
+            Round {state.round} · First to {state.targetScore}
           </p>
         </div>
         {state.players.length > 0 && (
