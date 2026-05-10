@@ -99,7 +99,7 @@ function Index() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-3xl px-4 py-8 sm:py-12">
+    <main className="min-h-screen w-full px-4 py-8 sm:py-12">
       <header className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="bg-[var(--gradient-primary)] bg-clip-text text-4xl font-black tracking-tight text-transparent sm:text-5xl">
