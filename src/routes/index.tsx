@@ -157,7 +157,7 @@ function Index() {
                       {i + 1}
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      <span className="truncate font-semibold">{p.name}</span>
+                      <span className="truncate text-3xl font-black">{p.name}</span>
                       {isLeader && <Crown className="h-4 w-4 text-primary" />}
                     </div>
                   </div>
