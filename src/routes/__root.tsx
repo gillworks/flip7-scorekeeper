@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Flip7 Scorekeeper" },
+      { name: "description", content: "Easy and fun scorekeeping app for the Flip7 card game" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Flip7 Scorekeeper" },
+      { property: "og:description", content: "Easy and fun scorekeeping app for the Flip7 card game" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Flip7 Scorekeeper" },
+      { name: "twitter:description", content: "Easy and fun scorekeeping app for the Flip7 card game" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4acf09bb-155f-4ceb-8773-4b8a3d2404e2/id-preview-1a24728d--a0ae1d63-7163-4e73-8a25-89776c6b6ec8.lovable.app-1778560448645.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4acf09bb-155f-4ceb-8773-4b8a3d2404e2/id-preview-1a24728d--a0ae1d63-7163-4e73-8a25-89776c6b6ec8.lovable.app-1778560448645.png" },
     ],
     links: [
       {
