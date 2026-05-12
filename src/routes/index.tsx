@@ -1,8 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import confetti from "canvas-confetti";
-import { Plus, Trash2, RotateCcw, RefreshCw, Trophy, Crown, Undo2 } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Plus, RotateCcw, RefreshCw, Trophy, Crown, Pencil } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clearState, loadState, saveState, uid, type GameState, type Player } from "@/lib/flip7";
@@ -26,6 +33,8 @@ function Index() {
   const [hydrated, setHydrated] = useState(false);
   const [newName, setNewName] = useState("");
   const [entryFor, setEntryFor] = useState<Player | null>(null);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [editingName, setEditingName] = useState("");
   const [drafts, setDrafts] = useState<Record<string, number>>({});
   const [roundKey, setRoundKey] = useState(0);
 
@@ -62,6 +71,23 @@ function Index() {
   function removePlayer(id: string) {
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }));
     setDrafts((d) => { const n = { ...d }; delete n[id]; return n; });
+  }
+
+  function openEditName(player: Player) {
+    setEditingPlayer(player);
+    setEditingName(player.name);
+  }
+
+  function saveEditedName() {
+    if (!editingPlayer) return;
+    const name = editingName.trim();
+    if (!name) return;
+    setState((s) => ({
+      ...s,
+      players: s.players.map((p) => p.id === editingPlayer.id ? { ...p, name } : p),
+    }));
+    setEditingPlayer(null);
+    setEditingName("");
   }
 
   function setDraft(id: string, score: number) {
@@ -126,7 +152,7 @@ function Index() {
 
   return (
     <main className="min-h-screen w-full px-4 py-4">
-      <header className="mb-4 flex items-center justify-between gap-3">
+      <header className="mb-6 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center">
         <div className="flex items-baseline gap-3">
           <h1 className="bg-[image:var(--gradient-primary)] bg-clip-text text-2xl font-black tracking-tight text-transparent sm:text-3xl">
             Flip 7
@@ -135,8 +161,23 @@ function Index() {
             Round {state.round} · First to {state.targetScore}
           </p>
         </div>
+
+        <div className="flex w-full justify-center md:w-auto">
+          <div className="flex w-full max-w-sm gap-2">
+            <Input
+              placeholder="Add player name…"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addPlayer()}
+            />
+            <Button onClick={addPlayer}>
+              <Plus className="mr-1 h-4 w-4" /> Add
+            </Button>
+          </div>
+        </div>
+
         {state.players.length > 0 && (
-          <div className="flex gap-1">
+          <div className="flex justify-start gap-1 md:justify-end">
             <Button variant="ghost" size="sm" onClick={newGameKeepPlayers}>
               <RefreshCw className="mr-1 h-4 w-4" /> New game
             </Button>
@@ -167,17 +208,27 @@ function Index() {
         </DialogContent>
       </Dialog>
 
-      <div className="mb-6 flex gap-2">
-        <Input
-          placeholder="Add player name…"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && addPlayer()}
-        />
-        <Button onClick={addPlayer}>
-          <Plus className="mr-1 h-4 w-4" /> Add
-        </Button>
-      </div>
+      <Dialog open={!!editingPlayer} onOpenChange={(open) => { if (!open) setEditingPlayer(null); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Edit player name</DialogTitle>
+            <DialogDescription>Rename this player without changing their score history.</DialogDescription>
+          </DialogHeader>
+
+          <Input
+            autoFocus
+            aria-label="Player name"
+            value={editingName}
+            onChange={(e) => setEditingName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && saveEditedName()}
+          />
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setEditingPlayer(null)}>Cancel</Button>
+            <Button onClick={saveEditedName} disabled={!editingName.trim()}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {state.players.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">
@@ -200,6 +251,16 @@ function Index() {
                     <div className="flex shrink-0 items-center gap-2">
                       <span className="truncate text-3xl font-black">{p.name}</span>
                       {isLeader && <Crown className="h-4 w-4 text-primary" />}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEditName(p)}
+                        title={`Edit ${p.name}'s name`}
+                        aria-label={`Edit ${p.name}'s name`}
+                        className="h-8 w-8 shrink-0"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
                     </div>
                     <div className="shrink-0">
                       <span className="text-3xl font-black tabular-nums">{p.total}</span>
