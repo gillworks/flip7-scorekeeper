@@ -93,12 +93,36 @@ function Index() {
   }
 
   function resetGame() {
-    if (!confirm("Reset the game? All scores will be cleared.")) return;
+    if (!confirm("Reset the game? All scores and players will be cleared.")) return;
     clearState();
     setState({ players: [], targetScore: DEFAULT_TARGET, round: 1 });
     setDrafts({});
     setRoundKey((k) => k + 1);
   }
+
+  function newGameKeepPlayers() {
+    if (!confirm("Start a new game with the same players? Scores will be cleared.")) return;
+    setState((s) => ({
+      ...s,
+      players: s.players.map((p) => ({ ...p, total: 0, rounds: [] })),
+      round: 1,
+    }));
+    setDrafts({});
+    setRoundKey((k) => k + 1);
+  }
+
+  useEffect(() => {
+    if (!winner) return;
+    const end = Date.now() + 3000;
+    const colors = ["#fbbf24", "#f59e0b", "#a855f7", "#22d3ee", "#ec4899"];
+    const frame = () => {
+      confetti({ particleCount: 4, angle: 60, spread: 70, origin: { x: 0 }, colors });
+      confetti({ particleCount: 4, angle: 120, spread: 70, origin: { x: 1 }, colors });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    };
+    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors });
+    frame();
+  }, [winner]);
 
   return (
     <main className="min-h-screen w-full px-4 py-4">
