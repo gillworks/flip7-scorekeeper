@@ -128,7 +128,7 @@ function Index() {
     <main className="min-h-screen w-full px-4 py-4">
       <header className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-baseline gap-3">
-          <h1 className="bg-[var(--gradient-primary)] bg-clip-text text-2xl font-black tracking-tight text-transparent sm:text-3xl">
+          <h1 className="bg-[image:var(--gradient-primary)] bg-clip-text text-2xl font-black tracking-tight text-transparent sm:text-3xl">
             Flip 7
           </h1>
           <p className="text-xs text-muted-foreground">
@@ -155,7 +155,7 @@ function Index() {
               <Crown className="absolute -top-3 left-1/2 h-10 w-10 -translate-x-1/2 text-primary" />
             </div>
             <DialogTitle className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Winner</DialogTitle>
-            <div className="text-5xl font-black bg-[var(--gradient-primary)] bg-clip-text text-transparent">
+            <div className="text-5xl font-black bg-[image:var(--gradient-primary)] bg-clip-text text-transparent">
               {winner?.name}
             </div>
             <div className="text-3xl font-black tabular-nums">{winner?.total} pts</div>
