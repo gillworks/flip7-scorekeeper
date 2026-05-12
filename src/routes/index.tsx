@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Trash2, RotateCcw, Trophy, Crown, Undo2 } from "lucide-react";
+import confetti from "canvas-confetti";
+import { Plus, Trash2, RotateCcw, RefreshCw, Trophy, Crown, Undo2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clearState, loadState, saveState, uid, type GameState, type Player } from "@/lib/flip7";
@@ -91,12 +93,36 @@ function Index() {
   }
 
   function resetGame() {
-    if (!confirm("Reset the game? All scores will be cleared.")) return;
+    if (!confirm("Reset the game? All scores and players will be cleared.")) return;
     clearState();
     setState({ players: [], targetScore: DEFAULT_TARGET, round: 1 });
     setDrafts({});
     setRoundKey((k) => k + 1);
   }
+
+  function newGameKeepPlayers() {
+    if (!confirm("Start a new game with the same players? Scores will be cleared.")) return;
+    setState((s) => ({
+      ...s,
+      players: s.players.map((p) => ({ ...p, total: 0, rounds: [] })),
+      round: 1,
+    }));
+    setDrafts({});
+    setRoundKey((k) => k + 1);
+  }
+
+  useEffect(() => {
+    if (!winner) return;
+    const end = Date.now() + 3000;
+    const colors = ["#fbbf24", "#f59e0b", "#a855f7", "#22d3ee", "#ec4899"];
+    const frame = () => {
+      confetti({ particleCount: 4, angle: 60, spread: 70, origin: { x: 0 }, colors });
+      confetti({ particleCount: 4, angle: 120, spread: 70, origin: { x: 1 }, colors });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    };
+    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors });
+    frame();
+  }, [winner]);
 
   return (
     <main className="min-h-screen w-full px-4 py-4">
@@ -110,21 +136,36 @@ function Index() {
           </p>
         </div>
         {state.players.length > 0 && (
-          <Button variant="ghost" size="sm" onClick={resetGame}>
-            <RotateCcw className="mr-1 h-4 w-4" /> Reset
-          </Button>
+          <div className="flex gap-1">
+            <Button variant="ghost" size="sm" onClick={newGameKeepPlayers}>
+              <RefreshCw className="mr-1 h-4 w-4" /> New game
+            </Button>
+            <Button variant="ghost" size="sm" onClick={resetGame}>
+              <RotateCcw className="mr-1 h-4 w-4" /> Reset
+            </Button>
+          </div>
         )}
       </header>
 
-      {winner && (
-        <div className="mb-6 flex items-center gap-3 rounded-xl border border-primary/40 bg-[var(--gradient-card)] p-4 shadow-[var(--shadow-glow)]">
-          <Trophy className="h-8 w-8 text-primary" />
-          <div>
-            <div className="text-xs uppercase tracking-wider text-muted-foreground">Winner</div>
-            <div className="text-xl font-bold">{winner.name} · {winner.total} pts</div>
+      <Dialog open={!!winner} onOpenChange={(o) => { if (!o) newGameKeepPlayers(); }}>
+        <DialogContent className="max-w-md border-primary/40 bg-[var(--gradient-card)] text-center shadow-[var(--shadow-glow)]">
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="relative">
+              <Trophy className="h-24 w-24 text-primary drop-shadow-[0_0_20px_hsl(var(--primary))]" />
+              <Crown className="absolute -top-3 left-1/2 h-10 w-10 -translate-x-1/2 text-primary" />
+            </div>
+            <DialogTitle className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Winner</DialogTitle>
+            <div className="text-5xl font-black bg-[var(--gradient-primary)] bg-clip-text text-transparent">
+              {winner?.name}
+            </div>
+            <div className="text-3xl font-black tabular-nums">{winner?.total} pts</div>
+            <DialogDescription className="sr-only">{winner?.name} won the game</DialogDescription>
+            <Button className="mt-2 w-full" onClick={newGameKeepPlayers}>
+              <RefreshCw className="mr-2 h-4 w-4" /> New game
+            </Button>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       <div className="mb-6 flex gap-2">
         <Input
