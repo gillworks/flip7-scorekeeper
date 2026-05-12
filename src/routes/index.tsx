@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Trash2, RotateCcw, Trophy, Crown, Undo2 } from "lucide-react";
+import confetti from "canvas-confetti";
+import { Plus, Trash2, RotateCcw, RefreshCw, Trophy, Crown, Undo2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clearState, loadState, saveState, uid, type GameState, type Player } from "@/lib/flip7";
